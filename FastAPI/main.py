@@ -1,6 +1,6 @@
-from typing import Union, Annotated
+from typing import Union, Annotated, Optional
 
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Query
 
 app = FastAPI()
 
@@ -18,5 +18,21 @@ def read_root():
 
 
 @app.get("/items/{item_id}")
-def read_item(item_id: int = Path(title="The ID of the item to get", gt = 0)):
+def read_item(item_id: int = Path(title="The ID of the item to get", gt = 0, lt=2)):
     return items[item_id]
+
+@app.get("/get-by-name/{item_id}")
+def get_item_by_name(*, 
+                     item_id: int = None,
+                     name: Optional[str] = None,
+                    #    = Query(title="The Name of the item to get"), 
+                     test: int):
+    for item_id in items:
+        if items[item_id]["name"] == name:
+            return items[item_id]
+        return {
+            "Data": "Not found",
+            "ord": ord(name),
+            "chr": chr(97),
+            "bytes": bytes("hassan")
+        }
